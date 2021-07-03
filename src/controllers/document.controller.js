@@ -3,16 +3,26 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { documentService } = require('../services');
+const { disallow } = require('joi');
 
 const createDocument = catchAsync(async (req, res) => {
-  const user = await documentService.createDocument(req.user.id, req.body);
-  res.status(httpStatus.CREATED).send(user);
+  // Verify if the user has uploaded a document 
+  const file = req.file;
+  if(file){
+    const documentBody = {
+      ...req.body,
+      path: file.path
+    }
+    const user = await documentService.createDocument(req.user.id,documentBody);
+    res.status(httpStatus.CREATED).send(user);
+  }
+  else{
+    res.status(httpStatus.BAD_REQUEST).send("Please attach a file");
+  }
 });
 
 const getDocuments = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['type', 'status']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  const result = await documentService.queryDocuments(filter, options);
+  const result = await documentService.queryDocuments(req.user.id);
   res.send(result);
 });
 

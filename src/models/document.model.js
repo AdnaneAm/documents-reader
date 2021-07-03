@@ -16,9 +16,10 @@ const documentSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
-      enum:['pending','approved','declined']
+      enum:['pending','approved','declined'],
+      default:'pending'
     },
     declineReason:{
       type: String,
@@ -30,10 +31,6 @@ const documentSchema = mongoose.Schema(
     timestamps: true,
   }
 );
-
-// add plugin that converts mongoose to json
-documentSchema.plugin(toJSON);
-documentSchema.plugin(paginate);
 
 
 module.exports = documentSchema;

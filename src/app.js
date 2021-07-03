@@ -13,6 +13,7 @@ const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -23,6 +24,9 @@ if (config.env !== 'test') {
 
 // set security HTTP headers
 app.use(helmet());
+
+// Static folder 
+app.use(express.static(__dirname));
 
 // parse json request body
 app.use(express.json());
@@ -63,5 +67,7 @@ app.use(errorConverter);
 
 // handle error
 app.use(errorHandler);
+
+
 
 module.exports = app;

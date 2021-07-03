@@ -10,7 +10,9 @@ const ApiError = require('../utils/ApiError');
  */
 const createDocument = async (userID, documentBody) => {
   const user = await User.findById(userID);
-  user.documents.create(documentBody);
+  console.log("document body : ",documentBody);
+  user.documents.push(documentBody);
+  user.save();
   return user;
 };
 
@@ -23,9 +25,10 @@ const createDocument = async (userID, documentBody) => {
  * @param {number} [options.page] - Current page (default = 1)
  * @returns {Promise<QueryResult>}
  */
-const queryDocuments = async (userID, filter, options) => {
+const queryDocuments = async (userID) => {
   const user = await User.findById(userID);
-  const documents = user.documents.paginate(filter, options);
+  console.log("user : ",user);
+  const documents = user.documents;
   return documents;
 };
 
