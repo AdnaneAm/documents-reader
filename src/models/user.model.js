@@ -44,10 +44,11 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    documents:[documentSchema]
-  },
-  {
-    timestamps: true,
+    documents:[documentSchema],
+    created: {
+      type: Date,
+      default:Date.now
+    }
   }
 );
 

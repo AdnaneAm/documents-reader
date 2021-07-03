@@ -3,6 +3,11 @@ const { toJSON, paginate } = require('./plugins');
 
 const documentSchema = mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     path: {
       type: String,
       required: true,
@@ -13,6 +18,12 @@ const documentSchema = mongoose.Schema(
       required: true,
       trim: true,
       enum:['relevé bancaire','facture','attestation de travail', 'autres']
+    },
+    language: {
+      type: String,
+      required: true,
+      trim: true,
+      enum:['fra','eng']
     },
     status: {
       type: String,
@@ -25,12 +36,13 @@ const documentSchema = mongoose.Schema(
       type: String,
       required: false,
       trim: true,
+    },
+    created: {
+      type: Date,
+      required:true,
+      default:Date.now
     }
   },
-  {
-    timestamps: true,
-  }
 );
-
-
+documentSchema.plugin(toJSON);
 module.exports = documentSchema;

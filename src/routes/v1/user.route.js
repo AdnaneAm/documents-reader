@@ -28,6 +28,9 @@ router
   .get(auth('getUserDocuments'), validate(documentValidation.getDocument), documentController.getDocument)
   .patch(auth('manageUserDocuments'), validate(documentValidation.updateDocument), documentController.updateDocument)
   .delete(auth('manageUserDocuments'), validate(documentValidation.deleteDocument), documentController.deleteDocument)
+router
+  .route('/:userId/documents/:documentID/read')
+  .get(auth('manageUserDocuments'), validate(documentValidation.readDocument), documentController.readDocument)
 
 module.exports = router;
 

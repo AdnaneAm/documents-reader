@@ -11,7 +11,8 @@ const createDocument = catchAsync(async (req, res) => {
   if(file){
     const documentBody = {
       ...req.body,
-      path: file.path
+      path: file.path,
+      name: file.originalname
     }
     const user = await documentService.createDocument(req.user.id,documentBody);
     res.status(httpStatus.CREATED).send(user);
@@ -48,10 +49,17 @@ const deleteDocument = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const readDocument = catchAsync(async (req, res) => {
+  const id = req.params.userId ? req.params.userId : req.user.id;
+  const documentText = await documentService.readDocument(id, req.params.documentID);
+  res.send(documentText);
+});
+
 module.exports = {
   createDocument,
   getDocuments,
   getDocument,
   updateDocument,
   deleteDocument,
+  readDocument
 };

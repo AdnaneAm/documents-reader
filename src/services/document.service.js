@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
 const fs = require('fs');
+const tesseract = require("node-tesseract-ocr")
 /**
  * Create a document
  * @param {Object} documentBody
@@ -55,7 +56,8 @@ const updateDocumentByID = async (userID, documentID, updateBody) => {
   }
   Object.assign(document, updateBody);
   await user.save();
-  return user;
+  const newDocument = user.documents.id(documentID);
+  return newDocument;
 };
 
 /**
@@ -68,6 +70,28 @@ const deleteDocumentByID = async (userID, documentID) => {
   const document = user.documents.id(documentID);
   if (!document) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Document not found');
+  }
+  try {
+    await document.remove();
+    user.save();
+    fs.unlinkSync(document.path);
+  } catch(err) {
+    console.error(err)
+  }
+};
+/**
+ * Read document text
+ * @param {ObjectId} userId
+ * @returns {Promise<User>}
+ */
+ const readDocumentByID = async (userID, documentID) => {
+  const user = await User.findById(userID);
+  const document = user.documents.id(documentID);
+  if (!document) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Document not found');
+  }
+  else if(document.status != 'approved'){
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Document not approved');
   }
   try {
     await document.remove();

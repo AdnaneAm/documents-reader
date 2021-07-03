@@ -27,6 +27,7 @@ app.use(helmet());
 
 // Static folder 
 app.use(express.static(__dirname));
+app.use(express.static('public'));
 
 // parse json request body
 app.use(express.json());
