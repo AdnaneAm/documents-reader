@@ -2,7 +2,10 @@ const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const userValidation = require('../../validations/user.validation');
+const documentValidation = require('../../validations/document.validation');
 const userController = require('../../controllers/user.controller');
+const documentController = require('../../controllers/document.controller');
+const {uploads, handleErrors} = require('../../middlewares/upload')
 
 const router = express.Router();
 
@@ -16,6 +19,15 @@ router
   .get(auth('getUsers'), validate(userValidation.getUser), userController.getUser)
   .patch(auth('manageUsers'), validate(userValidation.updateUser), userController.updateUser)
   .delete(auth('manageUsers'), validate(userValidation.deleteUser), userController.deleteUser);
+router
+  .route('/:userId/documents')
+  .get(auth('getUserDocuments'), validate(documentValidation.getDocuments), documentController.getDocuments)
+  .post(auth('manageUserDocuments'), uploads.single('document'), handleErrors, validate(documentValidation.createDocument), documentController.createDocument)
+router
+  .route('/:userId/documents/:documentID')
+  .get(auth('getUserDocuments'), validate(documentValidation.getDocument), documentController.getDocument)
+  .patch(auth('manageUserDocuments'), validate(documentValidation.updateDocument), documentController.updateDocument)
+  .delete(auth('manageUserDocuments'), validate(documentValidation.deleteDocument), documentController.deleteDocument)
 
 module.exports = router;
 

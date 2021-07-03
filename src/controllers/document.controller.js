@@ -22,12 +22,14 @@ const createDocument = catchAsync(async (req, res) => {
 });
 
 const getDocuments = catchAsync(async (req, res) => {
-  const result = await documentService.queryDocuments(req.user.id);
+  const id = req.params.userId ? req.params.userId : req.user.id;
+  const result = await documentService.queryDocuments(id);
   res.send(result);
 });
 
 const getDocument = catchAsync(async (req, res) => {
-  const document = await documentService.getDocumentByID(req.user.id, req.params.documentID);
+  const id = req.params.userId ? req.params.userId : req.user.id;
+  const document = await documentService.getDocumentByID(id, req.params.documentID);
   if (!document) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Document not found');
   }
@@ -35,12 +37,14 @@ const getDocument = catchAsync(async (req, res) => {
 });
 
 const updateDocument = catchAsync(async (req, res) => {
-  const user = await documentService.updateDocumentByID(req.user.id, req.params.documentID, req.body);
+  const id = req.params.userId ? req.params.userId : req.user.id;
+  const user = await documentService.updateDocumentByID(id, req.params.documentID, req.body);
   res.send(user);
 });
 
 const deleteDocument = catchAsync(async (req, res) => {
-  await documentService.deleteDocumentByID(req.user.id, req.params.docuemntID);
+  const id = req.params.userId ? req.params.userId : req.user.id;
+  await documentService.deleteDocumentByID(id, req.params.documentID);
   res.status(httpStatus.NO_CONTENT).send();
 });
 

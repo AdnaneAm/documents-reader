@@ -19,12 +19,14 @@ const getDocuments = {
 
 const getDocument = {
   params: Joi.object().keys({
+    userId: Joi.string().custom(objectId),
     documentID: Joi.string().custom(objectId),
   }),
 };
 
 const updateDocument = {
   params: Joi.object().keys({
+    userId: Joi.string().custom(objectId),
     documentID: Joi.required().custom(objectId),
   }),
   body: Joi.object()
@@ -36,6 +38,7 @@ const updateDocument = {
 
 const deleteDocument = {
   params: Joi.object().keys({
+    userId: Joi.string().custom(objectId),
     documentID: Joi.string().custom(objectId),
   }),
 };

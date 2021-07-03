@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
-
+const fs = require('fs');
 /**
  * Create a document
  * @param {Object} documentBody
@@ -27,7 +27,6 @@ const createDocument = async (userID, documentBody) => {
  */
 const queryDocuments = async (userID) => {
   const user = await User.findById(userID);
-  console.log("user : ",user);
   const documents = user.documents;
   return documents;
 };
@@ -38,7 +37,7 @@ const queryDocuments = async (userID) => {
  * @returns {Promise<Document>}
  */
 const getDocumentByID = async (userID, documentID) => {
-  const user = User.findById(userID);
+  const user = await User.findById(userID);
   const document = user.documents.id(documentID);
   return document;
 };
@@ -70,8 +69,13 @@ const deleteDocumentByID = async (userID, documentID) => {
   if (!document) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Document not found');
   }
-  await document.remove();
-  return user;
+  try {
+    await document.remove();
+    user.save();
+    fs.unlinkSync(document.path);
+  } catch(err) {
+    console.error(err)
+  }
 };
 
 module.exports = {
