@@ -92,15 +92,17 @@ const deleteDocumentByID = async (userID, documentID) => {
   else if(document.status != 'approved'){
     throw new ApiError(httpStatus.BAD_REQUEST, 'Document not approved');
   }
-
+  else if(document.content != ''){
+    return Promise.resolve(document.content);
+  }
   return Tesseract.recognize(
     document.path, 
     document.language,
     {logger: m => console.log(m)}
   ).then(({data:{text}}) => {
-    return Promise.resolve({
-      message: text
-    })
+    document.content = text;
+    user.save();
+    return Promise.resolve(text);
   })
   .catch((error) => {
     throw new ApiError(httpStatus.BAD_REQUEST, error);

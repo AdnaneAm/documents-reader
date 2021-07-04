@@ -37,6 +37,12 @@ const documentSchema = mongoose.Schema(
       required: false,
       trim: true,
     },
+    content:{
+      type: String,
+      required: false,
+      trim: true,
+      default: ''
+    },
     created: {
       type: Date,
       required:true,
