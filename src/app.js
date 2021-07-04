@@ -13,8 +13,7 @@ const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
-const bodyParser = require('body-parser');
-
+const path = require('path')
 const app = express();
 
 if (config.env !== 'test') {
@@ -58,10 +57,7 @@ if (config.env === 'production') {
 // v1 api routes
 app.use('/', routes);
 
-// send back a 404 error for any unknown api request
-app.use((req, res, next) => {
-  next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
-});
+
 
 // convert error to ApiError, if needed
 app.use(errorConverter);
@@ -69,6 +65,15 @@ app.use(errorConverter);
 // handle error
 app.use(errorHandler);
 
-
+app.use(express.static(path.join(__dirname, "../public/dist")))
+app.get('/*', (req, res) => {
+    console.log("im here")
+    const file = path.join(__dirname, '/public/dist', 'index.html');
+    res.sendFile(file);
+})
+// send back a 404 error for any unknown api request
+app.use((req, res, next) => {
+  next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
+});
 
 module.exports = app;
