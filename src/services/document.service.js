@@ -1,8 +1,7 @@
 const httpStatus = require('http-status');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
-const fs = require('fs');
-const tesseract = require("node-tesseract-ocr")
+const Tesseract = require('tesseract.js')
 /**
  * Create a document
  * @param {Object} documentBody
@@ -93,13 +92,19 @@ const deleteDocumentByID = async (userID, documentID) => {
   else if(document.status != 'approved'){
     throw new ApiError(httpStatus.BAD_REQUEST, 'Document not approved');
   }
-  try {
-    await document.remove();
-    user.save();
-    fs.unlinkSync(document.path);
-  } catch(err) {
-    console.error(err)
-  }
+
+  return Tesseract.recognize(
+    document.path, 
+    document.language,
+    {logger: m => console.log(m)}
+  ).then(({data:{text}}) => {
+    return Promise.resolve({
+      message: text
+    })
+  })
+  .catch((error) => {
+    throw new ApiError(httpStatus.BAD_REQUEST, error);
+  })
 };
 
 module.exports = {
@@ -108,4 +113,5 @@ module.exports = {
   getDocumentByID,
   updateDocumentByID,
   deleteDocumentByID,
+  readDocumentByID
 };

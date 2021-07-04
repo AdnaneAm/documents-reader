@@ -51,7 +51,7 @@ const deleteDocument = catchAsync(async (req, res) => {
 
 const readDocument = catchAsync(async (req, res) => {
   const id = req.params.userId ? req.params.userId : req.user.id;
-  const documentText = await documentService.readDocument(id, req.params.documentID);
+  const documentText = await documentService.readDocumentByID(id, req.params.documentID);
   res.send(documentText);
 });
 
