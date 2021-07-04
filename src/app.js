@@ -15,8 +15,6 @@ const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 const path = require('path')
 const app = express();
-const history = require('connect-history-api-fallback');
-
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
@@ -25,10 +23,6 @@ if (config.env !== 'test') {
 
 // set security HTTP headers
 app.use(helmet());
-
-app.use(history({
-  index:'/public/dist/index.html'
-}));
 
 // Static folder 
 app.use(express.static(__dirname));
