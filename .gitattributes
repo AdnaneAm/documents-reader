@@ -1,3 +1,7 @@
 # Convert text file line endings to lf
 * text eol=lf
 *.js text
+*.eot binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
